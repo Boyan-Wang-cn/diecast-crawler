@@ -1,7 +1,7 @@
 name: nightly-crawler
 on:
   schedule:
-    - cron: "0 7 * * *"  # 每天 22:00 BJT
+    - cron: "10 7 * * *"  # 每天北京时间15:10执行
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,6 @@ jobs:
         image: mongo:8.0.10
         ports:
           - 27017:27017
-        options: --auth  # 禁用认证（简化配置）
         env:
           MONGO_INITDB_DATABASE: diecast
 
@@ -26,7 +25,7 @@ jobs:
       - run: pip install playwright pymongo beautifulsoup4
       - run: playwright install chromium
 
-# 等待 MongoDB 启动
+      # 等待 MongoDB 启动
       - name: Wait for MongoDB
         run: |
           for i in {1..10}; do
