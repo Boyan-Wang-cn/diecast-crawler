@@ -1,4 +1,3 @@
-# .github/workflows/nightly.yml
 name: nightly-crawler
 on:
   schedule:
@@ -16,10 +15,14 @@ jobs:
       - run: pip install playwright pymongo beautifulsoup4
       - run: playwright install chromium
 
+      # 添加一个步骤来测试 MongoDB 连接
+      - name: Test MongoDB connection
+        run: |
+         python -c "from pymongo import MongoClient; client = MongoClient('mongodb://localhost:27017'); print(client.list_database_names() or 'Connection failed')"
+        if: ${{ failure() }}
+
       # 运行并把全部输出写到 crawler.log
       - run: python crawler.py 2>&1 | tee crawler.log
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
 
       # 上传日志文件（Artifacts）
       - name: Upload log
