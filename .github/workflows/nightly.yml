@@ -1,7 +1,7 @@
 name: nightly-crawler
 on:
   schedule:
-    - cron: "10 7 * * *"  # 每天北京时间15:10执行
+    - cron: "*/5 * * * *"  # 每5分钟执行一次
   workflow_dispatch:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - run: pip install playwright pymongo beautifulsoup4 lxml  
+      - run: pip install playwright pymongo beautifulsoup4 lxml
       - run: playwright install chromium
 
       # 等待 MongoDB 启动
