@@ -18,6 +18,8 @@ jobs:
 
       # 运行并把全部输出写到 crawler.log
       - run: python crawler.py 2>&1 | tee crawler.log
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
 
       # 上传日志文件（Artifacts）
       - name: Upload log
