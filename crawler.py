@@ -12,10 +12,7 @@ col.create_index("item_no", unique=True)
 
 def crawl():
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            proxy={"server": "http://127.0.0.1:7890"}
-        )
+        browser = p.chromium.launch()
         page = browser.new_page()
         page.goto("https://www.1stopdiecast.com/", timeout=60000)
         html = page.content()
