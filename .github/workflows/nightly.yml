@@ -36,10 +36,12 @@ jobs:
           echo "MongoDB failed to start"
           exit 1
 
-      - run: python crawler.py 2>&1 | tee crawler.log
+# 运行爬虫，把结果写 result.json
+      - run: python crawler.py > result.json
 
-      - name: Upload log
+      # 上传生成的 JSON
+      - name: Upload result JSON
         uses: actions/upload-artifact@v4
         with:
-          name: crawler-log-${{ github.run_number }}
-          path: crawler.log
+          name: crawler-result-${{ github.run_number }}
+          path: result.json
