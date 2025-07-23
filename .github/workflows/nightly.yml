@@ -1,0 +1,27 @@
+# .github/workflows/nightly.yml
+name: nightly-crawler
+on:
+  schedule:
+    - cron: "0 14 * * *"        # 每天 22:00 BJT
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.10" }
+
+      - run: pip install playwright pymongo
+      - run: playwright install chromium
+
+      # 运行并把全部输出写到 crawler.log
+      - run: python crawler.py 2>&1 | tee crawler.log
+
+      # 上传日志文件（Artifacts）
+      - name: Upload log
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawler-log-${{ github.run_number }}
+          path: crawler.log
