@@ -1,30 +1,37 @@
 name: nightly-crawler
 on:
   schedule:
-    - cron: "0 7 * * *"        # 每天 22:00 BJT
+    - cron: "0 7 * * *"  # 每天 22:00 BJT
   workflow_dispatch:
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
+    services:
+      # 添加 MongoDB 服务
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.10" }
+        with:
+          python-version: "3.10"
 
       - run: pip install playwright pymongo beautifulsoup4
       - run: playwright install chromium
 
-      # 添加一个步骤来测试 MongoDB 连接
-      - name: Test MongoDB connection
-        run: |
-         python -c "from pymongo import MongoClient; client = MongoClient('mongodb://localhost:27017'); print(client.list_database_names() or 'Connection failed')"
-        if: ${{ failure() }}
-
-      # 运行并把全部输出写到 crawler.log
+      # 运行爬虫
       - run: python crawler.py 2>&1 | tee crawler.log
 
-      # 上传日志文件（Artifacts）
+      # 上传日志
       - name: Upload log
         uses: actions/upload-artifact@v4
         with:
