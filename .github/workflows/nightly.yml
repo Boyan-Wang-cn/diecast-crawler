@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - run: pip install playwright pymongo beautifulsoup4
+      - run: pip install playwright pymongo beautifulsoup4 lxml  
       - run: playwright install chromium
 
       # 等待 MongoDB 启动
